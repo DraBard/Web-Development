@@ -1,6 +1,7 @@
 # Web-Development
 
-1. Wiki is a small encyclopedia page. it let's the user:
+### 1. Wiki
+Wiki is a small encyclopedia page. it let's the user:
   * Enter entry definition
   * Search for entry
   * Edit the entry
