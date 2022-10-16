@@ -1,0 +1,17 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Create
+{% endblock %}
+
+{% block body %}
+<form method="post" class="create">
+    {% csrf_token %}
+    <p> Write the title of your entry: </p>
+    <input autocomplete="off" id="title" name="title" placeholder="title" type="text" required>
+    <p> Write the deifinition of your entry: </p>
+    <textarea name="definition" placeholder="definition" type="text"></textarea>
+    <br>
+    <button class="btn button primary-button mr-4 text-uppercase" type="submit">Submit</button>
+</form>
+{% endblock %}

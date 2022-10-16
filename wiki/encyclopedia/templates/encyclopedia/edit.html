@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Edit
+{% endblock %}
+
+{% block body %}
+
+<form method="post" class="edit">
+    {% csrf_token %}
+    <p> Edit the entry: </p>
+    <textarea name="definition" placeholder="definition" type="text" value="entry" required>{{ entry }}
+    </textarea>
+    <br>
+    <button class="btn button primary-button mr-4 text-uppercase" type="submit">Save</button>
+</form>
+
+{% endblock %}
