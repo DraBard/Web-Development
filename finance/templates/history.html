@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th class="text-start">Symbol</th>
+            <th class="text-end">Shares</th>
+            <th class="text-end">Price</th>
+            <th class="text-end">Transacted</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in db_extracted %}
+        <tr>
+            <td class="text-start">{{ a["symbol"] }}</td>
+            <td class="text-start">{{ a["shares"] }}</td>
+            <td class="text-start">{{ a["price"] }}</td>
+            <td class="text-start">{{ a["date"] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

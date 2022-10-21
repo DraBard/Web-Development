@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="/static/styles.css" rel="stylesheet">
+        <title>Birthdays</title>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Birthdays</h1>
+        </div>
+        <div class="container">
+            <div class="section">
+
+                <h2>Add a Birthday</h2>
+                <!-- TODO: Create a form for users to submit a name, a month, and a day -->
+                <form action="/" method="post" id="add">
+                    <input autocomplete="off" autofocus name="name" placeholder="Name">
+                    <input autocomplete="off" name="month" placeholder="Month">
+                    <input autocomplete="off" name="day" placeholder="Day">
+                    <input type="submit">
+                </form>
+            </div>
+
+            <div class="section">
+
+                <h2>All Birthdays</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Birthday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- TODO: Loop through the database entries to display them in this table -->
+                        {% for b in birthday%}
+                        <tr>
+                            <td>{{ b["name"] }}</td>
+                            <td>{{ b["month"] }}/{{ b["day"] }}</td>
+                            <!-- delete registered record from db -->
+                            <td>
+                                <form action="/delete" method="post">
+                                    <input name="id" type="hidden" value="{{ b.id }}">
+                                    <input type="submit" value="DELETE">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
