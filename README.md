@@ -1,6 +1,24 @@
 # Web-Development
 
-### 1. Wiki
+### 1. Commerce
+Wiki is a auctions page. It has Database created.
+It let's the user:
+  * Register
+  * Create listings
+  * Bid on items
+  * Add auctions to watchlist
+  * Remove auctions from watchlist
+  * The owner of the auction to close that auction
+  * Comment on the items
+  * etc.
+#### Technological stack used:
+  * Python
+  * SQL
+  * Django
+  * HTML
+  * CSS
+
+### 2. Wiki
 Wiki is a small encyclopedia page. it let's the user:
   * Enter entry definition
   * Search for entry
@@ -13,7 +31,7 @@ Wiki is a small encyclopedia page. it let's the user:
   * HTML
   * CSS
 
-### 2. Finance
+### 3. Finance
 Finance is a webpage that lets the user log in to his account and buy and sell stocks.
 #### Technological stack used:
   * Python
@@ -21,7 +39,7 @@ Finance is a webpage that lets the user log in to his account and buy and sell s
   * HTML
   * CSS
 
-### 3. birthdays
+### 4. birthdays
 Birthdays is a small app that let's the user add and delete the birthdays from the databse.
 #### Technological stack used:
   * Python
