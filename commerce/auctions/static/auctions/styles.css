@@ -1,0 +1,25 @@
+body {
+    padding: 10px;
+}
+
+img {
+    max-width: 20%;
+    height: auto;
+}
+
+.listing {
+    float:right;
+    margin-right: 70%;
+    margin-top: 5%;
+}
+
+.title {
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.price {
+    font-weight: bold;
+    font-size: large;
+}
+

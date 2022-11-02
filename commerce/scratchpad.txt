@@ -1,0 +1,42 @@
+def index(request):
+    # zip listing object and bigs max aggregate to be able to iterate them both /
+    # at once in the index.html as jinja
+    zipped_listings_bids = zip(Listings.objects.all(), Bids.objects.values("auction_id").annotate(max_bid=Max("bid")))
+    print(Listings.objects.all(), Bids.objects.all())
+    for i, j in zipped_listings_bids:
+        print(i, j )
+    return render(request, "auctions/index.html", {
+        "listings_bids": zipped_listings_bids
+    })
+
+    {% for listing, bid in listings_bids %}
+    <div class="auction">
+        <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img">
+        <div class="listing">
+            <div class="title"><a href="{% url 'listing' listing.pk %}">{{ listing.title }}</a></div>
+            <br>
+            <div class="price">Price: ${{ bid.max_bid }}</div>
+            <br>
+            <div class="description">{{ listing.description }}</div> 
+        </div>
+    </div>
+    {% endfor %}
+
+
+        return render(request, "auctions/index.html", {
+        "listings": Listings.objects.all()
+    })
+
+
+    {% for listing in listings %}
+    <div class="auction">
+        <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img">
+        <div class="listing">
+            <div class="title"><a href="{% url 'listing' listing.pk %}">{{ listing.title }}</a></div>
+            <br>
+            <div class="price">Price: ${{ listing.starting_bid }}</div>
+            <br>
+            <div class="description">{{ listing.description }}</div> 
+        </div>
+    </div>
+    {% endfor %}

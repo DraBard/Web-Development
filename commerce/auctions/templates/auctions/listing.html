@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+   
+    <h2>{{ title }}</h2>
+
+    {% if user.is_authenticated %}
+    <div class="watchlist"><a href="{% url 'watchlist_add' listing_pk %}">watchlist</a></div>
+    {% endif %}
+
+    <img src="{{ image }}" alt="{{ title }}" class="img">
+    <p>{{ description }}</p>
+    <h2>${{ highest_bid }}</h2>
+
+    {% if user.is_authenticated %}
+    {% if open %}
+    <form action="{% url 'bid' listing_pk %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" type="number" step="any" name="bid" placeholder="Your Bid">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Place Bid">
+    </form>
+    {% else %}
+    <h2>CLOSED</h2>
+    {% endif %}
+    {% if request.user == listing_user and open %}
+    <div class="watchlist"><a href="{% url 'close' listing_pk %}">close</a></div>
+    {% endif %}
+    {% endif %}
+
+
+{% endblock %}
