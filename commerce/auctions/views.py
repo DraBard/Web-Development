@@ -93,12 +93,14 @@ def create(request):
 
 def auction(request, listing_pk):
     listing = Listings.objects.get(pk=listing_pk)
-    try:
-        # Get the highest bidder 
-        highest_bid = Bids.objects.filter(auction_id=listing_pk).aggregate(Max("bid"))['bid__max']
-        # highest_bidder = listing.bids.annotate(Max('amount')).order_by('-amount').first().bidder
-    except:
+    highest_bid = Bids.objects.filter(auction_id=listing_pk).aggregate(Max("bid"))['bid__max']
+    # When there are no bids
+    if listing.starting_bid == highest_bid:
         highest_bid = listing.starting_bid
+        highest_bidder = None    
+    # When there is at least one bid 
+    else:
+        highest_bidder = Bids.objects.filter(auction_id=listing_pk).annotate(Max('bid')).order_by('-bid').first().bidder
 
     context = {
         "title": listing.title,
@@ -107,7 +109,8 @@ def auction(request, listing_pk):
         "image": listing.image,
         "listing_pk": listing_pk,
         "listing_user": listing.user,
-        "open": listing.open
+        "open": listing.open,
+        "highest_bidder": highest_bidder
     }
 
     return render(request, "auctions/listing.html", context)
@@ -153,7 +156,8 @@ def watchlist_view(request):
     # Extract the listings that are on the watchlist
     # Extract by raw query in Django works so that the created
     # instance can only be iterated later on like in 'watchlist.html'
-    listings = Listings.objects.raw('SELECT auctions_listings.id, image, title, auctions_watchlists.id AS watchlist_pk FROM auctions_listings, auctions_watchlists WHERE auctions_listings.id=auctions_watchlists.auction_id')
+    listings = Listings.objects.raw('SELECT auctions_listings.id, image, title, auctions_watchlists.id AS watchlist_pk\
+    FROM auctions_listings, auctions_watchlists WHERE auctions_listings.id=auctions_watchlists.auction_id')
     return render(request, "auctions/watchlist.html",    {
     "listings": listings,
     })

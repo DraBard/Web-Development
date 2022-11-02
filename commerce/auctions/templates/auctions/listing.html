@@ -30,5 +30,8 @@
     {% endif %}
     {% endif %}
 
+    {% if not open and highest_bidder == request.user %}
+    <h4> Congratulions! You have won the auction!</h4>
+    {% endif %}
 
 {% endblock %}
