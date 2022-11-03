@@ -31,7 +31,8 @@ class Bids(models.Model):
 class Comments(models.Model):
     id = models.AutoField(primary_key=True)
     auction = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="auction_comment")
-    comment = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentator")
+    comment = models.CharField(max_length=500)
 
 class Watchlists(models.Model):
     id = models.AutoField(primary_key=True)

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listings, Bids, Watchlists
+from .models import User, Listings, Bids, Watchlists, Comments
 from django.db.models import Max
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -101,7 +101,8 @@ def auction(request, listing_pk):
     # When there is at least one bid 
     else:
         highest_bidder = Bids.objects.filter(auction_id=listing_pk).annotate(Max('bid')).order_by('-bid').first().bidder
-
+    # Get the comments on that auction
+    comments = Comments.objects.filter(auction_id=listing_pk).values_list("comment", flat=True)
     context = {
         "title": listing.title,
         "description": listing.description,
@@ -110,7 +111,8 @@ def auction(request, listing_pk):
         "listing_pk": listing_pk,
         "listing_user": listing.user,
         "open": listing.open,
-        "highest_bidder": highest_bidder
+        "highest_bidder": highest_bidder,
+        "comments": comments
     }
 
     return render(request, "auctions/listing.html", context)
@@ -173,3 +175,13 @@ def close(request, listing_pk):
     Listings.objects.filter(pk=listing_pk).update(open="False")
 
     return HttpResponseRedirect(reverse("index"))
+
+@login_required
+def comment(request, listing_pk):
+
+    comment = request.POST.get("comment")
+    listing = Listings.objects.get(pk=listing_pk)
+    new_comment = Comments(auction=listing, user=request.user, comment=comment)
+    new_comment.save()
+
+    return redirect("listing", listing_pk=listing_pk)
