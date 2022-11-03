@@ -130,7 +130,7 @@ dist
 .pnp.*
 
 # cache
-auctions/_pycache__/*
+/_pycache__/*
 
 # Scratchpad
-.scratchpad.txt
+scratchpad.txt

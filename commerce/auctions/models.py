@@ -9,6 +9,13 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     pass
 
+# Automatically populate this table with fixed set of categories
+# Data Migrations
+# https://docs.djangoproject.com/en/1.8/topics/migrations/#data-migrations
+class Categories(models.Model):
+    id = models.AutoField(primary_key=True)
+    categories = models.CharField(max_length=20)
+
 class Listings(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_listings")
@@ -17,6 +24,7 @@ class Listings(models.Model):
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.CharField(max_length=400)
     open = models.BooleanField(default=True)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="categories_listings")
 
     def __str__(self) -> str:
         return f"{self.title}"
@@ -39,3 +47,4 @@ class Watchlists(models.Model):
     auction = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="auction_watchlist")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_watchlist")
     watchlist = models.BooleanField()
+

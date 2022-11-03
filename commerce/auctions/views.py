@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listings, Bids, Watchlists, Comments
+from .models import User, Listings, Bids, Watchlists, Comments, Categories
 from django.db.models import Max
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -80,6 +80,7 @@ def create(request):
         listing.description = request.POST.get("description")
         listing.image = request.POST.get("image")
         listing.starting_bid = request.POST.get("starting_bid")
+        listing.category = request.POST.get("category")
         listing.user = request.user
         listing.save()
         # Save the starting bid as the first one in the Bids table
@@ -89,7 +90,10 @@ def create(request):
 
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/create.html")
+        categories = Categories.objects.values_list("categories", flat=True)
+        return render(request, "auctions/create.html", {
+            "categories": categories
+        })
 
 def auction(request, listing_pk):
     listing = Listings.objects.get(pk=listing_pk)
@@ -116,6 +120,12 @@ def auction(request, listing_pk):
     }
 
     return render(request, "auctions/listing.html", context)
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        "categories": Categories.objects.values_list("categories", flat=True)
+    })
+
 
 @login_required
 def bid(request, listing_pk):
