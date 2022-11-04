@@ -80,7 +80,7 @@ def create(request):
         listing.description = request.POST.get("description")
         listing.image = request.POST.get("image")
         listing.starting_bid = request.POST.get("starting_bid")
-        listing.category = request.POST.get("category")
+        listing.category = Categories.objects.get(pk=request.POST.get("category"))
         listing.user = request.user
         listing.save()
         # Save the starting bid as the first one in the Bids table
@@ -90,7 +90,7 @@ def create(request):
 
         return HttpResponseRedirect(reverse("index"))
     else:
-        categories = Categories.objects.values_list("categories", flat=True)
+        categories = Categories.objects.all()
         return render(request, "auctions/create.html", {
             "categories": categories
         })
@@ -121,9 +121,21 @@ def auction(request, listing_pk):
 
     return render(request, "auctions/listing.html", context)
 
-def categories(request):
+def categories_view(request):
+    categories = Categories.objects.all()
+
     return render(request, "auctions/categories.html", {
-        "categories": Categories.objects.values_list("categories", flat=True)
+        "categories": categories
+    })
+
+def categories_listings(request, category_pk):
+    listings = Listings.objects.filter(category_id=category_pk)
+    categories = Categories.objects.get(pk=category_pk)
+    category = categories.categories
+
+    return render(request, "auctions/categories_listings.html", {
+        "category": category,
+        "listings": listings
     })
 
 
