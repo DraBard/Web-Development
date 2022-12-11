@@ -5,6 +5,12 @@
     <head>
         <title>{% block title %}Auctions{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+        <!-- Alertify CSS -->
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+        <!-- Alertify Default theme -->
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
     <body>
@@ -45,5 +51,13 @@
         <hr>
         {% block body %}
         {% endblock %}
+        <!-- Alertify JavaScript -->
+        <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+        <script>
+            {% for flashmsg in messages %}
+                alertify.set('notifier','position', 'top-center');
+                alertify.success('{{ flashmsg }}');
+            {% endfor %}
+        </script>
     </body>
 </html>

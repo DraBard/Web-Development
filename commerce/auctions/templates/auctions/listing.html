@@ -25,6 +25,11 @@
         <div class="form-group">
             <input class="form-control" type="number" step="any" name="bid" placeholder="Your Bid">
         </div>
+        {% for msg in messages %}
+        <div class="alert alert-info" role="alert">
+            {{ msg }}
+        </div>   
+        {% endfor %}
         <input class="btn btn-primary" type="submit" value="Place Bid">
     </form>
     {% else %}

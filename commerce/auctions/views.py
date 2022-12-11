@@ -144,7 +144,11 @@ def bid(request, listing_pk):
     # get info from database
     listing = Listings.objects.get(pk=listing_pk)
     user = request.user
-    bid = float(request.POST.get("bid"))
+    try:
+        bid = float(request.POST.get("bid"))
+    except ValueError:
+        messages.success(request, "You must place a bid")
+        return redirect("listing", listing_pk=listing_pk)
     # Update db for Bids model
     # Check if there is a bid on that auction
     if Bids.objects.filter(auction_id=listing_pk):
@@ -152,15 +156,15 @@ def bid(request, listing_pk):
         if bid > highest_bid:
             new_bid = Bids(auction=listing, bidder=user, bid=bid)
             new_bid.save()
-            messages.success(request, f"Bidded {bid}")
+            messages.success(request, "Your bid has been saved")
         else:
-            return HttpResponse("Your bid must be higher")
+            messages.success(request, "Your bid must be higher then the current price")
     elif bid > listing.starting_bid:    
         new_bid = Bids(auction=listing, bidder=user, bid=bid)
         new_bid.save()
-        messages.success(request, f"Bidded {bid}")
+        messages.success(request, "Your bid has been saved")
     else:
-        return HttpResponse("Your bid must be higher")
+        messages.success(request, "Your bid must be higher than the current price")
 
     return redirect("listing", listing_pk=listing_pk)
     
