@@ -1,0 +1,27 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<body>
+<div class="form-container">
+    <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}
+        <label for="message">New Post</label><br>
+        <textarea id="message" name="message" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Post">
+    </form>
+</div>
+
+{% for user, text, date, like in context%}
+<div class="form-container">
+       <div class="user"> 
+        <a class="nav-link" href="{% url 'user' user %}"><strong>{{ user }}</strong></a>
+       </div> 
+       <div class="text"> {{ text }} </div> 
+        <div class="date"> {{ date }} </div> 
+        <div class="like"> {{ like }} </div> 
+</div>
+{% endfor %}
+
+</body>
+
+{% endblock %}

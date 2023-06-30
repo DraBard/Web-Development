@@ -1,0 +1,27 @@
+h1 {
+    margin: 10px;
+}
+
+.form-container {
+    padding: 20px; /* space inside the div */
+    margin: 30px; /* space around the div */
+    border: 1px solid #ccc; /* optional: border around the div */
+}
+
+.user {
+    font-weight: bold;
+}
+
+textarea {
+    width: 100%; /* make textarea take up full width of the container */
+    box-sizing: border-box; /* include padding and border in textarea's total width */
+}
+
+/* Style for the submit button */
+input[type="submit"] {
+    background-color: blue; /* Set background color to blue */
+    color: white; /* Set text color to white */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
