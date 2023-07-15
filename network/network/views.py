@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.utils import OperationalError
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 from .models import User, Post
 
@@ -25,17 +26,19 @@ def index(request):
         dates = posts.values_list("date", flat=True)
         likes = posts.values_list("like", flat=True)
 
-        contexts = zip(users, texts, dates, likes)
+        context = list(zip(users, texts, dates, likes))
+        paginator = Paginator(context, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
 
         context = {
-            "context": contexts
+            "page_obj": page_obj
         }
 
         return render(request, "network/index.html", context)
     except OperationalError:
         # If there are no posts, render the template without the context
         return render(request, "network/index.html")
-
 
 
 def login_view(request):
@@ -95,6 +98,9 @@ def user(request, username):
     n_followers = user.followers.count()
     n_following = user.following.count()
     posts = Post.objects.filter(user_id=user_id)
+    dates = posts.values_list("date", flat=True)
+    likes = posts.values_list("like", flat=True)
+    posts_context = zip(posts, dates, likes)
 
     current_user = request.user
     if user in current_user.following.all():
@@ -102,23 +108,33 @@ def user(request, username):
     else:
         follow = "Follow"
 
-    return render(request, "network/user.html", {
+    context = {
         "n_followers": n_followers,
         "n_following": n_following,
         "posts": posts,
         "username": user,
         "user_id": user_id,
-        "follow": follow
-    })
+        "follow": follow,
+        "posts_context": posts_context
+    }
+
+    context = list(context)
+    paginator = Paginator(context, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {
+        "page_obj": page_obj
+    }
+
+    return render(request, "network/user.html", context)
 
 def toggle_follow(request, target_user_id):
     # Assuming that the current user is logged in and stored in request.user
     current_user = request.user
-    print(current_user)
 
     # Fetch the target user by ID
     target_user = User.objects.get(pk=target_user_id)
-    print(target_user)
+
 
     # Check if the current user is already following the target user
     if target_user in current_user.following.all():
@@ -129,3 +145,30 @@ def toggle_follow(request, target_user_id):
         # Follow
         current_user.following.add(target_user)
         return JsonResponse({"action": "follow"})
+    
+def following(request):
+    current_user = request.user
+    following_users = current_user.following.all()
+
+    # Check if there are any posts
+    try:
+        posts = Post.objects.filter(user_id__in=following_users).order_by('-date')
+        users = posts.values_list("user__username", flat=True)
+        texts = posts.values_list("text", flat=True)
+        dates = posts.values_list("date", flat=True)
+        likes = posts.values_list("like", flat=True)
+
+        context = list(zip(users, texts, dates, likes))
+        paginator = Paginator(context, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            "page_obj": page_obj
+        }
+
+        return render(request, "network/following.html", context)
+    except OperationalError:
+        # If there are no posts, render the template without the context
+        return render(request, "network/following.html")
+

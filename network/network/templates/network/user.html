@@ -7,10 +7,12 @@
 
 <h1>{{ username }}</h1>
 
+{% if user != username %}
 <button id="followButton" data-user-id="{{ user_id }}">
     {% csrf_token %}
     {{ follow }}
 </button>
+{% endif %}
 
 
 <div>
@@ -19,14 +21,33 @@
 <div>
     Following: {{ n_following }}
 </div>
-{% for text in posts %}
+{% for text, date, like in posts_context %}
 <div class="form-container">
-    {{ text.text }}
+    <div class="text"> {{ text.text }} </div> 
+    <div class="date"> {{ date }} </div> 
+    <div class="like"> {{ like }} </div> 
 </div>
 {% endfor %}
 {% endif %}
 
-    
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 </body>
 
 

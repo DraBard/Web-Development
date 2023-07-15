@@ -25,3 +25,9 @@ input[type="submit"] {
     padding: 10px 20px; /* Add padding */
     cursor: pointer; /* Change cursor to pointer on hover */
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+
