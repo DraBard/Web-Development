@@ -21,11 +21,11 @@
 <div>
     Following: {{ n_following }}
 </div>
-{% for text, date, like in posts_context %}
+{% for post in page_obj %}
 <div class="form-container">
-    <div class="text"> {{ text.text }} </div> 
-    <div class="date"> {{ date }} </div> 
-    <div class="like"> {{ like }} </div> 
+    <div class="text"> {{ post.text }} </div> 
+    <div class="date"> {{ post.date }} </div> 
+    <div class="like"> {{ post.like }} </div> 
 </div>
 {% endfor %}
 {% endif %}

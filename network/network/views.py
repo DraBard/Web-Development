@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.db.utils import OperationalError
 from django.http import JsonResponse
@@ -91,16 +91,18 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+    
 
 def user(request, username):
-    user = User.objects.get(username=username)
+    user = get_object_or_404(User, username=username)
     user_id = user.id
     n_followers = user.followers.count()
     n_following = user.following.count()
     posts = Post.objects.filter(user_id=user_id)
-    dates = posts.values_list("date", flat=True)
-    likes = posts.values_list("like", flat=True)
-    posts_context = zip(posts, dates, likes)
+
+    paginator = Paginator(posts, 10)  # Set the number of posts per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     current_user = request.user
     if user in current_user.following.all():
@@ -111,22 +113,14 @@ def user(request, username):
     context = {
         "n_followers": n_followers,
         "n_following": n_following,
-        "posts": posts,
         "username": user,
         "user_id": user_id,
         "follow": follow,
-        "posts_context": posts_context
+        "page_obj": page_obj  # Use the paginated page object
     }
 
-    context = list(context)
-    paginator = Paginator(context, 10)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    context = {
-        "page_obj": page_obj
-    }
+    return render(request, 'network/user.html', context)
 
-    return render(request, "network/user.html", context)
 
 def toggle_follow(request, target_user_id):
     # Assuming that the current user is logged in and stored in request.user

@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.error('Unexpected action:', data.action);
             }
+
+            // Refresh the page
+            window.location.reload();
         })
         .catch(error => {
             // Handle errors (failed network request, JSON parsing error, etc.)
