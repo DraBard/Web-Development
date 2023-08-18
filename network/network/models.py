@@ -13,4 +13,9 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     like = models.IntegerField(default=0)
 
+class UserLikes(models.Model):
+    id = models.AutoField(primary_key=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post_id")
+    user = models.CharField(max_length=100)
+
 

@@ -14,7 +14,6 @@
 </button>
 {% endif %}
 
-
 <div>
     Followers: {{ n_followers }}
 </div>
@@ -23,9 +22,22 @@
 </div>
 {% for post in page_obj %}
 <div class="form-container">
+
+    {% if user == username %}
+    <button id="editButton" data-post-id="{{ post.id }}">
+        edit
+    </button>
+    <form id="editForm">
+        {% csrf_token %}
+        <textarea id="editTextarea" name="editTextarea" style="display: none;"></textarea>
+        <button id="saveButton" type="submit" style="display: none;">save</button>
+    </form>    
+    {% endif %}
+
     <div class="text"> {{ post.text }} </div> 
     <div class="date"> {{ post.date }} </div> 
     <div class="like"> {{ post.like }} </div> 
+    
 </div>
 {% endfor %}
 {% endif %}

@@ -3,7 +3,7 @@
 {% block body %}
 <body>
 
-{% for user, text, date, like in page_obj%}
+{% for user, text, date, like in page_obj %}
 <div class="form-container">
         <div class="user"> 
         <a class="nav-link" href="{% url 'user' user %}"><strong>{{ user }}</strong></a>

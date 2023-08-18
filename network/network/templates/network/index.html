@@ -11,14 +11,27 @@
     </form>
 </div>
 
-{% for user, text, date, like in page_obj%}
+{% for username, post_id, text, date, like, userlike in page_obj%}
 <div class="form-container">
        <div class="user"> 
-        <a class="nav-link" href="{% url 'user' user %}"><strong>{{ user }}</strong></a>
+        {% if user.username == username %}
+        <button id="editButton" data-post-id="{{ post_id }}">
+            edit
+        </button>
+        <form id="editForm">
+            {% csrf_token %}
+            <textarea id="editTextarea" name="editTextarea" style="display: none;"></textarea>
+            <button id="saveButton" type="submit" style="display: none;">save</button>
+        </form>    
+        {% endif %}
+        <a class="nav-link" href="{% url 'user' username %}"><strong>{{ username }}</strong></a>
        </div> 
        <div class="text"> {{ text }} </div> 
         <div class="date"> {{ date }} </div> 
         <div class="like"> {{ like }} </div> 
+        <button id="likeButton">
+            {{ userlike }}
+        </button>
 </div>
 {% endfor %}
 
