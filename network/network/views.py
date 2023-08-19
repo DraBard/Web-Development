@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.db.utils import OperationalError
 from django.http import JsonResponse
@@ -12,11 +12,13 @@ from .models import User, Post, UserLikes
 
 def index(request):
     user = request.user
+    print("TUTAJ JAKI RESUEST MEETHOD",  request.method)
     if request.method == "POST":
         post = Post()
         post.text = request.POST["message"]
         post.user = user
         post.save()
+        return redirect("index")
 
     # Check if there are any posts
     try:
@@ -30,7 +32,10 @@ def index(request):
 
         userlikes = []
         for post in posts:
-            userlike = UserLikes.objects.filter(post_id=post, user=user).exists()
+            if UserLikes.objects.filter(post_id=post, user=user).exists():
+                userlike = "Unlike"
+            else:
+                userlike = "Like"
             print("userlikes", userlikes)
             userlikes.append(userlike)
         
@@ -110,7 +115,7 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
-    
+
 
 def user(request, username):
     user = get_object_or_404(User, username=username)
@@ -140,6 +145,7 @@ def user(request, username):
 
     return render(request, 'network/user.html', context)
 
+
 def toggle_follow(request, target_user_id):
     # Assuming that the current user is logged in and stored in request.user
     current_user = request.user
@@ -157,22 +163,32 @@ def toggle_follow(request, target_user_id):
         current_user.following.add(target_user)
         return JsonResponse({"action": "follow"})
     
+
 def toggle_like(request, target_post_id):
     # Assuming that the current user is logged in and stored in request.user
     print(target_post_id)
-    # Fetch the target user by ID
-    userlikes = UserLikes()
-    userlikes.post_id = target_post_id
-    userlikes.save()
-    users_likes_list = userlikes.filter(post_id=target_post_id)
-    if request.user in users_likes_list:
-        userlikes.get(post_id=target_post_id).delete()
+    users_likes_list = list(UserLikes.objects.filter(post_id=target_post_id).values_list('user', flat=True))
+    user = str(request.user)
+    print("taki jest user", type(user))
+    if user in users_likes_list:
+        UserLikes.objects.filter(post_id=target_post_id, user=user).delete()
+        substract_like = Post.objects.get(pk=target_post_id)
+        substract_like.like -= 1
+        substract_like.save()
+        print("I am in like")
         return JsonResponse({"action": "like"})
     else:
-        userlikes.user_id = request.user
+        userlikes = UserLikes()
+        userlikes.post_id = target_post_id
+        userlikes.user = user
         userlikes.save()
+        add_like = Post.objects.get(pk=target_post_id)
+        add_like.like += 1
+        add_like.save()
+        print("I am in unlike")
         return JsonResponse({"action": "unlike"})
     
+
 def following(request):
     current_user = request.user
     following_users = current_user.following.all()

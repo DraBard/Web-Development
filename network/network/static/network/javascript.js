@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveButtons = document.querySelectorAll('#saveButton');
     const editTextareas = document.querySelectorAll('#editTextarea');
     const editForms = document.querySelectorAll('#editForm');
-    const likeButtons = document.querySelectorAll("#likeButton");
     const text = document.querySelectorAll(".text")
 
     editButtons.forEach((editButton, index) => {
@@ -53,42 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('There was a problem:', error);
-            });
-        
-        console.log(likeButtons[index])
-        likeButtons[index].addEventListener('click', function() {
-            console.log("clicked")
-            fetch(`like/${postId}/`)
-            .then(response => {
-                // Check if the response is okay (status code 200-299)
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                // Parse the response body as JSON
-                return response.json();
-            })
-            .then(data => {
-                // Here, data is the parsed JSON from the response
-                console.log(data);
-    
-                // Update the button text based on the action
-                if (data.action === 'like') {
-                    likeButtons[index].textContent = 'Unlike';
-                } else if (data.action === 'unlike') {
-                    likeButtons[index].textContent = 'Like';
-                } else {
-                    console.error('Unexpected action:', data.action);
-                }
-    
-                // Refresh the page
-                window.location.reload();
-            })
-            .catch(error => {
-                // Handle errors (failed network request, JSON parsing error, etc.)
-                console.error('There was a problem:', error);
-            })});
-
-        
+            });        
         });
 
     // Function to get CSRF token from cookies
@@ -98,12 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     });
 
-    const followButton = document.getElementById('followButton');
+    const likeButtons = document.querySelectorAll("#likeButton");
+    const like = document.querySelectorAll(".like")
 
-    followButton.addEventListener('click', function() {
-        const targetUserId = this.dataset.userId;
-
-        fetch(`/toggle_follow/${targetUserId}/`)
+    likeButtons.forEach((likeButton, index) => {
+        likeButton.addEventListener('click', function() {
+        console.log("clicked")
+        const postId = likeButton.getAttribute('post-id');
+        console.log(postId)
+        fetch(`like/${postId}/`)
         .then(response => {
             // Check if the response is okay (status code 200-299)
             if (!response.ok) {
@@ -117,24 +84,68 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(data);
 
             // Update the button text based on the action
-            if (data.action === 'follow') {
-                followButton.textContent = 'Unfollow';
-            } else if (data.action === 'unfollow') {
-                followButton.textContent = 'Follow';
+            if (data.action === 'like') {
+                likeButton.textContent = 'Like';
+
+                const currentLikes = parseInt(like[index].textContent); // Parse current text content to integer
+                const updatedLikes = currentLikes - 1; // Increment by 1
+                like[index].textContent = updatedLikes.toString(); // Update text content with
+
+            } else if (data.action === 'unlike') {
+                likeButton.textContent = 'Unlike';
+
+                const currentLikes = parseInt(like[index].textContent); // Parse current text content to integer
+                const updatedLikes = currentLikes + 1; // Increment by 1
+                like[index].textContent = updatedLikes.toString(); // Update text content with
+
             } else {
                 console.error('Unexpected action:', data.action);
             }
 
-            // Refresh the page
-            window.location.reload();
+            // // Refresh the page
+            // window.location.reload();
         })
         .catch(error => {
             // Handle errors (failed network request, JSON parsing error, etc.)
             console.error('There was a problem:', error);
         })});
-    
+    });
 
+    const followButton = document.getElementById('followButton');
 
+    if (followButton) {
+        followButton.addEventListener('click', function() {
+            const targetUserId = this.dataset.userId;
 
+            fetch(`/toggle_follow/${targetUserId}/`)
+            .then(response => {
+                // Check if the response is okay (status code 200-299)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Parse the response body as JSON
+                return response.json();
+            })
+            .then(data => {
+                // Here, data is the parsed JSON from the response
+                console.log(data);
+
+                // Update the button text based on the action
+                if (data.action === 'follow') {
+                    followButton.textContent = 'Unfollow';
+                } else if (data.action === 'unfollow') {
+                    followButton.textContent = 'Follow';
+                } else {
+                    console.error('Unexpected action:', data.action);
+                }
+
+                // Refresh the page
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors (failed network request, JSON parsing error, etc.)
+                console.error('There was a problem:', error);
+            })});
+    };
 });
 
