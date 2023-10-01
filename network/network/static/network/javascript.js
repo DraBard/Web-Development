@@ -67,9 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     likeButtons.forEach((likeButton, index) => {
         likeButton.addEventListener('click', function() {
-        console.log("clicked")
         const postId = likeButton.getAttribute('post-id');
-        console.log(postId)
         fetch(`like/${postId}/`)
         .then(response => {
             // Check if the response is okay (status code 200-299)

@@ -1,0 +1,13 @@
+{% extends "CodeGym/layout.html" %}
+
+{% block body %}
+{% if user.is_authenticated %}
+
+<body>
+
+<h1>{{ user }}</h1>
+
+</body>
+
+{% endif %}
+{% endblock %}

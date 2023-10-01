@@ -1,0 +1,17 @@
+{% extends "CodeGym/layout.html" %}
+
+{% block body %}
+<body>
+    {% if user.is_authenticated %}
+    {% for exercise_id, title in context %}
+    
+    <div>
+        <a class="nav-link" href="{% url 'exercise' exercise_id %}"><strong>{{ title }}</strong></a>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+
+</body>
+
+{% endblock %}

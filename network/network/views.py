@@ -12,7 +12,6 @@ from .models import User, Post, UserLikes
 
 def index(request):
     user = request.user
-    print("TUTAJ JAKI RESUEST MEETHOD",  request.method)
     if request.method == "POST":
         post = Post()
         post.text = request.POST["message"]
@@ -28,7 +27,6 @@ def index(request):
         texts = posts.values_list("text", flat=True)
         dates = posts.values_list("date", flat=True)
         likes = posts.values_list("like", flat=True)
-        print("liketype", type(likes))
 
         userlikes = []
         for post in posts:
@@ -122,7 +120,8 @@ def user(request, username):
     user_id = user.id
     n_followers = user.followers.count()
     n_following = user.following.count()
-    posts = Post.objects.filter(user_id=user_id)
+
+    posts = Post.objects.filter(user_id=user_id).order_by('-date')
 
     paginator = Paginator(posts, 10)  # Set the number of posts per page
     page_number = request.GET.get('page')
@@ -149,7 +148,6 @@ def user(request, username):
 def toggle_follow(request, target_user_id):
     # Assuming that the current user is logged in and stored in request.user
     current_user = request.user
-    print(target_user_id)
     # Fetch the target user by ID
     target_user = User.objects.get(pk=target_user_id)
 
@@ -166,10 +164,8 @@ def toggle_follow(request, target_user_id):
 
 def toggle_like(request, target_post_id):
     # Assuming that the current user is logged in and stored in request.user
-    print(target_post_id)
     users_likes_list = list(UserLikes.objects.filter(post_id=target_post_id).values_list('user', flat=True))
     user = str(request.user)
-    print("taki jest user", type(user))
     if user in users_likes_list:
         UserLikes.objects.filter(post_id=target_post_id, user=user).delete()
         substract_like = Post.objects.get(pk=target_post_id)
