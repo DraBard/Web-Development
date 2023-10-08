@@ -6,7 +6,12 @@
     {% if user.is_authenticated %}
     <div class="description-container">
         <strong>{{ title }}</strong><br>
+        description: <br>
         {{ description }}<br>
+        prompt: <br>
+        {{ prompt }}<br>
+        example: <br>
+        {{ example }}<br>
         <form id="coding", method="post">
             {% csrf_token %}
             <textarea id="console"></textarea><br>
