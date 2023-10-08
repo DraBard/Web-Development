@@ -1,0 +1,20 @@
+{% extends "CodeGym/layout.html" %}
+
+{% block body %}
+<body>
+
+    {% if user.is_authenticated %}
+    <div class="description-container">
+        <strong>{{ title }}</strong><br>
+        {{ description }}<br>
+        <form id="coding", method="post">
+            {% csrf_token %}
+            <textarea id="console"></textarea><br>
+            <button id="runBtn", type="submit">Run</button>
+        </form>
+    </div>
+    {% endif %}
+
+</body>
+
+{% endblock %}

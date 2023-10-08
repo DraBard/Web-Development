@@ -1,13 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.db.utils import OperationalError
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from .models import User, Exercises
-
+import json
+import docker
 
 def index(request):
     return render(request, "CodeGym/index.html")
@@ -81,6 +82,35 @@ def exercises(request):
 
 
 def exercise(request, exercise_id):
+    exercises = Exercises.objects.get(pk=exercise_id)
+    title = exercises.title
+    description = exercises.description
+    prompt = exercises.prompt
+    example = exercises.example
 
+    context = {
+        "title": title,
+        "description": description,
+        "prompt": prompt,
+        "example": example
+    }
+    return render(request, 'CodeGym/exercise.html', context)
 
-    return render(request, 'CodeGym/exercise.html')
+def run_code(request):
+    if request.method == 'POST':
+        print("here")
+        try:
+            data = json.loads(request.body)
+            code = data.get('code', '')
+            print(code)
+            client = docker.from_env()
+            try:
+                # Note: This is a very basic way of running the code, and it's limited to Python.
+                result = client.containers.run("python:3.8", command=["python", "-c", code], remove=True, timeout=10)
+                return JsonResponse({'output': result.decode()})
+            except Exception as e:
+                return JsonResponse({'error': str(e)})
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest("Invalid JSON format")
+
+    return JsonResponse({'error': 'Invalid request'})

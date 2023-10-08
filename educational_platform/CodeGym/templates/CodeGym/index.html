@@ -4,13 +4,13 @@
 <body>
     <div>Welcome to CodeGym</div>
 
-    <!-- {% if user.is_authenticated %} -->
+    {% if user.is_authenticated %}
 
     <div>
         <a class="nav-link" href="{% url 'exercises' %}"><strong>Exercises</strong></a>
     </div>
     
-    <!-- {% endif %} -->
+    {% endif %}
 
 </body>
 
