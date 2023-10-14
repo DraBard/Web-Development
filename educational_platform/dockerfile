@@ -1,0 +1,8 @@
+FROM python:3.8-slim
+
+# Working directory for the container
+WORKDIR /app
+
+# Security settings: Run container as a non-root user
+RUN useradd -m myuser
+USER myuser

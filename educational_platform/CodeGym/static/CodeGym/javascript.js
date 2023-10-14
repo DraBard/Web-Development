@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         codingForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            console.log("klikniete");
     
              // Function to get CSRF token from cookies
             function getCookie(name) {
@@ -15,12 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return cookieValue ? cookieValue.pop() : '';
             }
     
-            const code = document.getElementById('console').value;
-            console.log(code);
+            const code_in = document.getElementById('console_in').value;
+            const code_out = document.getElementById('console_out');
+
+            console.log(code_in);
             fetch('run_code/', {
             method: 'POST',
             body: JSON.stringify({
-                'code': code
+                'code_in': code_in
             }),
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
@@ -33,9 +34,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 return response.json();
             })
+
+            .then(data => {
+                console.log(data)
+                code_out.value = data.output;
+            })
+
+            .catch(error => {
+                console.error('Fetch error:', error);  // This logs any network or parsing errors
             });
-
+            });
     }
-
-
 })

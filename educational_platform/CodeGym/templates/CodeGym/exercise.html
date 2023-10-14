@@ -14,8 +14,9 @@
         {{ example }}<br>
         <form id="coding", method="post">
             {% csrf_token %}
-            <textarea id="console"></textarea><br>
-            <button id="runBtn", type="submit">Run</button>
+            <textarea id="console_in"></textarea><br>
+            <button id="runBtn", type="submit">Run</button><br>
+            <textarea id="console_out"></textarea>
         </form>
     </div>
     {% endif %}

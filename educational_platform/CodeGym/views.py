@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from .models import User, Exercises
 import json
 import docker
+import os
 
 def index(request):
     return render(request, "CodeGym/index.html")
@@ -97,20 +98,53 @@ def exercise(request, exercise_id):
     return render(request, 'CodeGym/exercise.html', context)
 
 def run_code(request):
-    if request.method == 'POST':
-        print("here")
-        try:
-            data = json.loads(request.body)
-            code = data.get('code', '')
-            print(code)
-            client = docker.from_env()
-            try:
-                # Note: This is a very basic way of running the code, and it's limited to Python.
-                result = client.containers.run("python:3.8", command=["python", "-c", code], remove=True, timeout=10)
-                return JsonResponse({'output': result.decode()})
-            except Exception as e:
-                return JsonResponse({'error': str(e)})
-        except json.JSONDecodeError:
-            return HttpResponseBadRequest("Invalid JSON format")
+    if request.method == "POST":
+        # Parse the JSON data
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        code = body_data.get('code_in')    
 
-    return JsonResponse({'error': 'Invalid request'})
+    # Save the code to a file
+    with open('script.py', 'w') as file:
+        file.write(code)
+
+    # Connect to Docker
+    client = docker.from_env()
+    script_path = os.path.abspath('script.py').rstrip('script.py')
+    print(script_path)
+    # Run the container
+    try:
+        print("I am here 1")
+        container = client.containers.run(
+            "codegym:latest",
+            detach = True,
+            volumes={script_path: {'bind': '/app', 'mode': 'rw'}},
+            # remove=True,  # remove the container when it's done
+            mem_limit='100m',  # limit the memory usage
+            network_disabled=True,  # disable network access for security
+            # stdout=True,
+            # stderr=True,
+            command=["python", "/app/script.py"],
+        )
+        # # Wait for the container to finish execution
+        # exit_code, output = container.wait(condition='not-running')
+        # print("Container exited with code:", exit_code)
+        print("after docker run")
+        container.wait()  # This line will block until the container stops.
+        print("Container execution finished.")
+        # Get the logs (output)
+        logs = container.logs()
+        print("Logs1", logs)
+        print("Logs", logs.decode("utf-8"))
+        print("I am here 3")
+        container.remove()
+
+    except docker.errors.ContainerError as e:
+        # The container exited with a non-zero exit code
+        return JsonResponse({'error': str(e)})
+    except Exception as e:
+        # Handle other exceptions
+        return JsonResponse({'error': 'An unexpected error occurred'})
+
+    # Return the container's output as a response
+    return JsonResponse({'output': logs.decode('utf-8')})
