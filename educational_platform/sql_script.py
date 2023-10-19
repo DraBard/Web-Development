@@ -1,4 +1,22 @@
 import sqlite3
+import random
+from datetime import datetime
+import os
+import django
+
+# Setting up Django environment
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "educational_platform.settings")
+django.setup()
+
+from django.contrib.auth import get_user_model
+from CodeGym.models import Exercises, User
+
+# Connect to Django's user model
+User = get_user_model()
+
+# Clear existing data
+User.objects.all().delete()
+Exercises.objects.all().delete()
 
 # Connect to database (it will create 'exercises.db' if it doesn't exist)
 conn = sqlite3.connect('db.sqlite3')
@@ -25,6 +43,60 @@ for exercise in exercises:
     INSERT INTO CodeGym_exercises (title, description, prompt, example)
     VALUES (?, ?, ?, ?)
     ''', (exercise['title'], exercise['description'], exercise['prompt'], exercise['example']))
+
+# Dummy data for users
+names = ["Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Hannah", "Ian", "Jane", "Karl", "Lucy", "Mike", "Nina", "Oscar", "Polly", "Quinn", "Rachel"]
+password = "password"  # Dummy password for all users
+current_datetime = datetime.now()
+
+for user_type in [("HEADMASTER", 2), ("TUTOR", 5), ("STUDENT", 10)]:
+    for _ in range(user_type[1]):
+        name = random.choice(names)
+        first_name = name.split()[0] if ' ' in name else name
+        last_name = name.split()[1] if ' ' in name else 'Doe'
+        names.remove(name)
+        user = User(username=name, email=name.lower() + "@example.com", first_name=first_name, last_name=last_name)
+        user.set_password(password)
+        user.user_type = user_type[0]
+        if user_type[0] == "HEADMASTER":
+            user.is_staff = True
+        user.save()
+
+# # Insert 2 headmasters
+# for i in range(2):
+#     name = random.choice(names)
+#     first_name = name.split()[0] if ' ' in name else name  # Extracting first name
+#     last_name = name.split()[1] if ' ' in name else 'Doe'  # Extracting last name or using a default
+#     names.remove(name)  # Ensure unique names
+#     cursor.execute('''
+#     INSERT INTO CodeGym_user (username, password, email, user_type, is_superuser, first_name, last_name, is_staff, is_active, date_joined)
+#     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#     ''', (name, password, name.lower() + "@example.com", "HEADMASTER", 0, first_name, last_name, 1, 1, current_datetime))
+
+# # Insert 5 tutors
+# for i in range(5):
+#     name = random.choice(names)
+#     first_name = name.split()[0] if ' ' in name else name  # Extracting first name
+#     last_name = name.split()[1] if ' ' in name else 'Doe'  # Extracting last name or using a default
+#     names.remove(name)  # Ensure unique names
+#     cursor.execute('''
+#     INSERT INTO CodeGym_user (username, password, email, user_type, is_superuser, first_name, last_name, is_staff, is_active, date_joined)
+#     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#     ''', (name, password, name.lower() + "@example.com", "TUTOR", 0, first_name, last_name, 0, 1, current_datetime))
+
+# # Insert 10 students
+# for i in range(10):
+#     name = random.choice(names)
+#     first_name = name.split()[0] if ' ' in name else name  # Extracting first name
+#     last_name = name.split()[1] if ' ' in name else 'Doe'  # Extracting last name or using a default
+#     names.remove(name)  # Ensure unique names
+#     cursor.execute('''
+#     INSERT INTO CodeGym_user (username, password, email, user_type, is_superuser, first_name, last_name, is_staff, is_active, date_joined)
+#     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#     ''', (name, password, name.lower() + "@example.com", "STUDENT", 0, first_name, last_name, 0, 1, current_datetime))
+
+
+
 
 # Commit changes and close connection
 conn.commit()

@@ -10,5 +10,6 @@ urlpatterns = [
     path("exercises", views.exercises, name="exercises"),
     path("user", views.user, name="user"),
     path("exercises/<str:exercise_id>", views.exercise, name="exercise"),
-    path("exercises/run_code/", views.run_code, name="run_code")
+    path("exercises/run_code/", views.run_code, name="run_code"),
+    path("groups", views.groups, name="groups")
 ]

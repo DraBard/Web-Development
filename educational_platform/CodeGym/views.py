@@ -1,12 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.models import Permission
+from django.shortcuts import render
 from django.urls import reverse
 from django.db.utils import OperationalError
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from .models import User, Exercises
+from .models import Exercises, Student, Tutor, Headmaster, User
 import json
 import docker
 import os
@@ -44,7 +46,8 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
-
+        user_type = request.POST["user_type"]
+        
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
@@ -55,7 +58,19 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            if user_type == "HEADMASTER":
+                user = Headmaster.objects.create_user(username, email, password)
+                tutor_permission = Permission.objects.get(codename='can_access_headmaster_dashboard')
+                user.user_permissions.add(tutor_permission)
+            if user_type == "TUTOR":
+                user = Tutor.objects.create_user(username, email, password)
+                tutor_permission = Permission.objects.get(codename='can_access_tutor_dashboard')
+                user.user_permissions.add(tutor_permission)
+            if user_type == "STUDENT":
+                user = Student.objects.create_user(username, email, password)
+                student_permission = Permission.objects.get(codename='can_access_student_dashboard')
+                user.user_permissions.add(student_permission)
+            user.user_type = user_type
             user.save()
         except IntegrityError:
             return render(request, "CodeGym/register.html", {
@@ -96,6 +111,20 @@ def exercise(request, exercise_id):
         "example": example
     }
     return render(request, 'CodeGym/exercise.html', context)
+
+
+def has_tutor_or_headmaster_perms(user):
+    return user.has_perm('CodeGym.can_access_tutor_dashboard') or user.has_perm('CodeGym.can_access_headmaster_dashboard')
+
+@user_passes_test(has_tutor_or_headmaster_perms)
+def groups(request):
+    if request.method == "GET":
+        user_type = request.user.user_type
+        if user_type == "HEADMASTER":
+            students = User.objects.filter(user_type="STUDENT")
+
+    return render(request, 'CodeGym/groups.html', {'students': students})
+
 
 def run_code(request):
     if request.method == "POST":
