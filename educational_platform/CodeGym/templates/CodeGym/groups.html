@@ -3,15 +3,52 @@
 {% block body %}
 
 <body>
-
     {% if user.is_authenticated %}
-    {% for student in students %}
-    <li>
-        {{ student }}
-    </li>
-    {% endfor %}
-    {% endif %}
+    <form action="{% url 'groups' %}" method="post">
+        {% csrf_token %}
+        Create groups:   
+        <div class="create-group">
+            <input class="create-control" type="text" name="group_name" placeholder="Group Name">
+            <input class="btn btn-primary" type="submit" value="Create Group">
+        </div>
+    </form>
+    <br>
 
+    Students:
+    {% for student in students %}
+    <div>
+        <li>
+            {{ student }}
+            <!-- Dropdown form for each student to assign them to a group -->
+            <form action="{% url 'groups' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="student_id" value="{{ student.id }}">
+                <select name="group_id">
+                    {% for group in groups %}
+                        <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Assign to Group">
+            </form>
+        </li>
+    </div>
+    {% endfor %}
+    <br>
+
+    <!-- Display each group and its students -->
+    {% for group in groups %}
+    <div>
+        <h3>Group: {{ group.name }}</h3>
+        <ul>
+            {% for student in group.students.all %}
+            <li>{{ student }}</li>  <!-- Adjust this to display student details -->
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    {% endif %}
 </body>
 
 {% endblock %}
+

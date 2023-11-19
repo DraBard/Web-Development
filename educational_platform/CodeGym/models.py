@@ -16,6 +16,7 @@ class Headmaster(User):
     class Meta:
         permissions = [
             ("can_access_headmaster_dashboard", "Can access headmaster dashboard"),
+            ("can_manage_groups", "Can manage groups"),
             # Other tutor-specific permissions
         ]
 
@@ -43,4 +44,8 @@ class Exercises(models.Model):
     prompt = models.CharField(max_length=1000)
     example = models.CharField(max_length=1000)
 
-
+class Group(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    tutor = models.ForeignKey(Tutor, on_delete=models.SET_NULL, null=True)
+    students = models.ManyToManyField(Student)

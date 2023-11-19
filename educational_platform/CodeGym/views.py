@@ -3,15 +3,17 @@ from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth.models import Permission
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.db.utils import OperationalError
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from .models import Exercises, Student, Tutor, Headmaster, User
+from .models import Exercises, Student, Tutor, Headmaster, User, Group
 import json
 import docker
 import os
+from django.contrib import messages
+
 
 def index(request):
     return render(request, "CodeGym/index.html")
@@ -116,14 +118,65 @@ def exercise(request, exercise_id):
 def has_tutor_or_headmaster_perms(user):
     return user.has_perm('CodeGym.can_access_tutor_dashboard') or user.has_perm('CodeGym.can_access_headmaster_dashboard')
 
-@user_passes_test(has_tutor_or_headmaster_perms)
-def groups(request):
-    if request.method == "GET":
-        user_type = request.user.user_type
-        if user_type == "HEADMASTER":
-            students = User.objects.filter(user_type="STUDENT")
 
-    return render(request, 'CodeGym/groups.html', {'students': students})
+def groups(request):
+    user_type = request.user.user_type
+    context = {}
+
+    if request.method == "GET":
+
+        if user_type == "HEADMASTER":
+            students = Student.objects.all()
+            groups = Group.objects.all()
+            context = {'students': students, 'groups': groups}
+
+        if user_type == "TUTOR":
+            students = Student.objects.all()
+            groups = Group.objects.all()
+            context = {'students': students, 'groups': groups}
+
+        if user_type == "STUDENT":
+            students = Student.objects.all()
+            groups = Group.objects.all()
+            context = {'students': students, 'groups': groups}
+
+    if request.method == "POST":
+        # Handle group creation
+        if 'group_name' in request.POST:
+            group_name = request.POST.get("group_name")
+            
+            if group_name == "":
+                messages.error(request, "Empty string. No group name")
+                return redirect('groups')
+            
+            if Group.objects.filter(name=group_name).exists():
+                messages.error(request, "A group with this name already exists.")
+                return redirect('groups')
+
+            new_group = Group(name=group_name)
+            new_group.save()
+
+            messages.success(request, "Group created successfully.")
+            return redirect('groups')
+
+        if 'student_id' in request.POST and 'group_id' in request.POST:
+            student_id = request.POST.get("student_id")
+            group_id = request.POST.get("group_id")
+
+            try:
+                # Then, get the corresponding Student instance
+                student = Student.objects.get(user_ptr_id=student_id)
+                group = Group.objects.get(id=group_id)
+
+                group.students.add(student)
+                messages.success(request, "Student assigned to group successfully.")
+            except (User.DoesNotExist, Student.DoesNotExist, Group.DoesNotExist):
+                messages.error(request, "Invalid student or group ID.")
+
+            return redirect('groups')
+
+
+    return render(request, 'CodeGym/groups.html', context)
 
 
 def run_code(request):
@@ -143,7 +196,6 @@ def run_code(request):
     print(script_path)
     # Run the container
     try:
-        print("I am here 1")
         container = client.containers.run(
             "codegym:latest",
             detach = True,
@@ -157,15 +209,9 @@ def run_code(request):
         )
         # # Wait for the container to finish execution
         # exit_code, output = container.wait(condition='not-running')
-        # print("Container exited with code:", exit_code)
-        print("after docker run")
         container.wait()  # This line will block until the container stops.
-        print("Container execution finished.")
         # Get the logs (output)
         logs = container.logs()
-        print("Logs1", logs)
-        print("Logs", logs.decode("utf-8"))
-        print("I am here 3")
         container.remove()
 
     except docker.errors.ContainerError as e:
@@ -177,3 +223,10 @@ def run_code(request):
 
     # Return the container's output as a response
     return JsonResponse({'output': logs.decode('utf-8')})
+
+
+@permission_required('User.can_manage_groups', raise_exception=True)
+def manage_groups(request):
+    # Your logic to list, create, update, or delete groups
+    pass
+
