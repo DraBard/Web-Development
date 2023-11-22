@@ -24,16 +24,19 @@
                 {% csrf_token %}
                 <input type="hidden" name="student_id" value="{{ student.id }}">
                 <select name="group_id">
+                    <option value="">Select Group</option>
                     {% for group in groups %}
-                        <option value="{{ group.id }}">{{ group.name }}</option>
+                        <option value="{{ group.id }}" {% if group in student.groups.all %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
                     {% endfor %}
                 </select>
-                <input type="submit" value="Assign to Group">
+                <input type="submit" name="action" value="Assign" class="assign-button">
+                <input type="submit" name="action" value="Remove" class="remove-button">
             </form>
         </li>
     </div>
     {% endfor %}
-    <br>
 
     <!-- Display each group and its students -->
     {% for group in groups %}

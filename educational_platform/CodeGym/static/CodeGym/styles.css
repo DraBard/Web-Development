@@ -2,127 +2,193 @@
 
 /* Global Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f4f8;
-  }
-  
-  .navbar {
-    background-color: #3498db;
-  }
-  
-  .navbar-brand {
-    font-size: 32px;
-    color: blue;
-    font-weight: bold;
-  }
-  
-  .navbar-nav .nav-item {
-    margin-right: 15px;
-  }
-  
-  .nav-link {
-    color: blue !important;
-    font-weight: bold;
-  }
-  
-/* Set navbar link color for visibility */
-  .navbar-nav .nav-link {
-    color: blue;
-  }
-  
-  .navbar-nav .nav-link:hover {
-    color: #ecf0f1;
-  }
-  
-  /* Set navbar dropdown link color for visibility */
-  .navbar-nav .dropdown-item {
-    color: #333 !important;
-  }
-  
-  .navbar-nav .dropdown-item:hover {
-    background-color: #3498db;
-    color: blue !important;
-  }
-  
-  /* Body Styles */
-  .body {
-    padding: 20px;
-  }
-  
-  /* Post Styles */
-  .post {
-    background-color: blue;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .post-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .post-content {
-    font-size: 18px;
-    line-height: 1.6;
-    color: #444;
-  }
-  
-  /* Button Styles */
-  .btn-primary {
-    background-color: #2980b9;
-    border-color: #2980b9;
-    font-weight: bold;
-  }
-  
-  .btn-primary:hover {
-    background-color: #1a5276;
-    border-color: #1a5276;
-  }
-  
-  /* Footer Styles */
-  .footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #3498db;
-    color: blue;
-  }
-  
-  /* User Profile Styles */
-  .user-profile {
-    text-align: center;
-  }
-  
-  .user-profile h1 {
-    font-size: 36px;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  .user-profile h2 {
-    font-size: 24px;
-    color: #666;
-  }
-  
-  .description-container {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 50%;  /* Set the container width to 50% of the viewport width */
-    margin: 0 auto; /* This centers the container horizontally on the page */
-  }
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f4f8;
+}
 
-  /* Animation Styles */
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
+.navbar {
+  background-color: #3498db;
+}
+
+.navbar-brand {
+  font-size: 32px;
+  color: blue;
+  font-weight: bold;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 15px;
+}
+
+.nav-link {
+  color: blue !important;
+  font-weight: bold;
+}
+
+/* Set navbar link color for visibility */
+.navbar-nav .nav-link {
+  color: blue;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ecf0f1;
+}
+
+/* Set navbar dropdown link color for visibility */
+.navbar-nav .dropdown-item {
+  color: #333 !important;
+}
+
+.navbar-nav .dropdown-item:hover {
+  background-color: #3498db;
+  color: blue !important;
+}
+
+/* Body Styles */
+.body {
+  padding: 20px;
+}
+
+/* Post Styles */
+.post {
+  background-color: blue;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.post-content {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: #2980b9;
+  border-color: #2980b9;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #1a5276;
+  border-color: #1a5276;
+}
+
+/* Footer Styles */
+.footer {
+  text-align: center;
+  padding: 10px;
+  background-color: #3498db;
+  color: blue;
+}
+
+/* User Profile Styles */
+.user-profile {
+  text-align: center;
+}
+
+.user-profile h1 {
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.user-profile h2 {
+  font-size: 24px;
+  color: #666;
+}
+
+.description-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 50%;  /* Set the container width to 50% of the viewport width */
+  margin: 0 auto; /* This centers the container horizontally on the page */
+}
+
+#console_in {
+  width: 100%; /* Take the full width of the container */
+  height: 300px; /* Set a fixed height */
+  resize: vertical; /* Allow only vertical resizing */
+}
+
+#console_out {
+  width: 100%; /* Take the full width of the container */
+  height: 300px; /* Set a fixed height */
+  background-color: #333; /* Dark background */
+  color: #fff; /* Light text */
+  border: none; /* Optional: removes the border */
+  resize: vertical; /* Allow only vertical resizing */
+  font-family: "Courier New", monospace; /* Gives it a classic console look */
+  padding: 10px; /* Add some padding inside the textarea */
+}
+
+#runBtn {
+  padding: 10px 20px; /* Add padding inside the button to make it larger */
+  margin: 10px 0; /* Add margin outside the button for more space around it */
+  /* Other styles you might want to add for the button */
+  font-weight: bold; /* Makes the text bold */
+  border: 1px solid blue; /* Adds a border, you can remove this if you don't want it */
+  background-color: blue; /* Button color */
+  color: white; /* Text color */
+  cursor: pointer; /* Changes the cursor to indicate it's clickable */
+  border-radius: 5px; /* Optional: rounds the corners of the button */
+  font-size: 16px; /* Increases the font size */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+#runBtn:hover {
+  background-color: #2980b9; /* Darker shade on hover */
+}
+
+.assign-button {
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  border: 1px solid #28a745; /* Green border */
+  padding: 5px 10px; /* Padding inside the button */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Cursor changes to pointer on hover */
+  font-size: 14px; /* Font size */
+  margin-right: 5px; /* Margin to the right */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.assign-button:hover {
+  background-color: #218838; /* Slightly darker green on hover */
+}
+
+.remove-button {
+  background-color: #dc3545; /* Red background */
+  color: white; /* White text */
+  border: 1px solid #dc3545; /* Red border */
+  padding: 5px 10px; /* Padding inside the button */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Cursor changes to pointer on hover */
+  font-size: 14px; /* Font size */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.remove-button:hover {
+  background-color: #c82333; /* Slightly darker red on hover */
+}
+
+
+/* Animation Styles */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
   }
-  
+  50% {
+    transform: scale(1.1);
+  }
+}

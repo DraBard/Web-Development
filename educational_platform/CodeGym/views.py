@@ -160,21 +160,34 @@ def groups(request):
             return redirect('groups')
 
         if 'student_id' in request.POST and 'group_id' in request.POST:
+            # Handle group assignment or removal
             student_id = request.POST.get("student_id")
             group_id = request.POST.get("group_id")
+            action = request.POST.get("action")
 
             try:
-                # Then, get the corresponding Student instance
-                student = Student.objects.get(user_ptr_id=student_id)
-                group = Group.objects.get(id=group_id)
+                student = Student.objects.get(id=student_id)
+                if action == "Assign":
+                    # Assign the student to the selected group
+                    if group_id:
+                        group = Group.objects.get(id=group_id)
+                        group.students.add(student)
+                        messages.success(request, "Student assigned to group successfully.")
+                    else:
+                        messages.error(request, "No group selected.")
+                elif action == "Remove":
+                    # Remove the student from the selected group
+                    if group_id:
+                        group = Group.objects.get(id=group_id)
+                        group.students.remove(student)
+                        messages.success(request, "Student removed from group successfully.")
+                    else:
+                        messages.error(request, "No group selected for removal.")
 
-                group.students.add(student)
-                messages.success(request, "Student assigned to group successfully.")
-            except (User.DoesNotExist, Student.DoesNotExist, Group.DoesNotExist):
+            except (Student.DoesNotExist, Group.DoesNotExist):
                 messages.error(request, "Invalid student or group ID.")
 
             return redirect('groups')
-
 
     return render(request, 'CodeGym/groups.html', context)
 
@@ -193,7 +206,6 @@ def run_code(request):
     # Connect to Docker
     client = docker.from_env()
     script_path = os.path.abspath('script.py').rstrip('script.py')
-    print(script_path)
     # Run the container
     try:
         container = client.containers.run(
@@ -223,10 +235,3 @@ def run_code(request):
 
     # Return the container's output as a response
     return JsonResponse({'output': logs.decode('utf-8')})
-
-
-@permission_required('User.can_manage_groups', raise_exception=True)
-def manage_groups(request):
-    # Your logic to list, create, update, or delete groups
-    pass
-
