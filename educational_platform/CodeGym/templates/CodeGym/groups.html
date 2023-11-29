@@ -4,39 +4,41 @@
 
 <body>
     {% if user.is_authenticated %}
-    <form action="{% url 'groups' %}" method="post">
-        {% csrf_token %}
-        Create groups:   
-        <div class="create-group">
-            <input class="create-control" type="text" name="group_name" placeholder="Group Name">
-            <input class="btn btn-primary" type="submit" value="Create Group">
-        </div>
-    </form>
-    <br>
+        {% if user.user_type != "STUDENT" %}
+        <form action="{% url 'groups' %}" method="post">
+            {% csrf_token %}
+            Create groups:   
+            <div class="create-group">
+                <input class="create-control" type="text" name="group_name" placeholder="Group Name">
+                <input class="btn btn-primary" type="submit" value="Create Group">
+            </div>
+        </form>
+        <br>
 
-    Students:
-    {% for student in students %}
-    <div>
-        <li>
-            {{ student }}
-            <!-- Dropdown form for each student to assign them to a group -->
-            <form action="{% url 'groups' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="student_id" value="{{ student.id }}">
-                <select name="group_id">
-                    <option value="">Select Group</option>
-                    {% for group in groups %}
-                        <option value="{{ group.id }}" {% if group in student.groups.all %}selected{% endif %}>
-                            {{ group.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <input type="submit" name="action" value="Assign" class="assign-button">
-                <input type="submit" name="action" value="Remove" class="remove-button">
-            </form>
-        </li>
-    </div>
-    {% endfor %}
+        Students:
+        {% for student in students %}
+        <div>
+            <li>
+                {{ student }}
+                <!-- Dropdown form for each student to assign them to a group -->
+                <form action="{% url 'groups' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                    <select name="group_id">
+                        <option value="">Select Group</option>
+                        {% for group in groups %}
+                            <option value="{{ group.id }}" {% if group in student.groups.all %}selected{% endif %}>
+                                {{ group.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" name="action" value="Assign" class="assign-button">
+                    <input type="submit" name="action" value="Remove" class="remove-button">
+                </form>
+            </li>
+        </div>
+        {% endfor %}
+    {% endif %}
 
     <!-- Display each group and its students -->
     {% for group in groups %}

@@ -124,23 +124,13 @@ def groups(request):
     context = {}
 
     if request.method == "GET":
-
-        if user_type == "HEADMASTER":
-            students = Student.objects.all()
-            groups = Group.objects.all()
-            context = {'students': students, 'groups': groups}
-
-        if user_type == "TUTOR":
-            students = Student.objects.all()
-            groups = Group.objects.all()
-            context = {'students': students, 'groups': groups}
-
-        if user_type == "STUDENT":
-            students = Student.objects.all()
-            groups = Group.objects.all()
-            context = {'students': students, 'groups': groups}
+        students = Student.objects.all()
+        groups = Group.objects.all()
+        context = {'students': students, 'groups': groups}
 
     if request.method == "POST":
+        if user_type == "STUDENT":
+            return HttpResponseForbidden("Students are not allowed to perform this action.")
         # Handle group creation
         if 'group_name' in request.POST:
             group_name = request.POST.get("group_name")
